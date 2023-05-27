@@ -27,7 +27,6 @@ export class App extends Component {
   };
 
   addContact = evt => {
-    evt.preventDefault();
     const { name, number } = evt.currentTarget.elements;
     this.checkName(name.value) &&
       this.setState(prevState => ({
@@ -43,7 +42,9 @@ export class App extends Component {
   };
 
   checkName = name => {
-    const resultCheck = this.state.contacts.find(obj => obj.name === name);
+    const resultCheck = this.state.contacts.find(
+      obj => obj.name.toLowerCase() === name.toLowerCase()
+    );
     if (resultCheck) {
       alert(`${name} is already in contacts.`);
     }

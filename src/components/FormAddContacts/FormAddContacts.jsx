@@ -10,10 +10,15 @@ export class FormAddContacts extends Component {
   handleChange = ({ target: { name, value } }) => {
     this.setState({ [name]: value });
   };
+  submitAddContact = evt => {
+    evt.preventDefault();
+    this.props.addContact(evt);
+    this.setState({ name: '', number: '' });
+  };
   render() {
     return (
       <>
-        <form className={css.form} onSubmit={this.props.addContact}>
+        <form className={css.form} onSubmit={this.submitAddContact}>
           <label className={css.label}>
             Name
             <input
