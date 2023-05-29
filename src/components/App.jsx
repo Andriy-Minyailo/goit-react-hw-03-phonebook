@@ -1,44 +1,50 @@
 import { Component } from 'react';
 import css from './App.module.css';
-import { nanoid } from 'nanoid';
 import { FormAddContacts } from './FormAddContacts/FormAddContacts';
 import { Filter } from './Filter/Filter';
 import { ListContacts } from './ListContacts/ListContacts';
+import { getLocalStorage, saveLocalStorage } from 'checkLocalStorage';
+const KEY_LOCAL_CONTACTS = 'cotacts';
 
 export class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
   };
+  componentDidMount() {
+    const stateLocalStorage = getLocalStorage(KEY_LOCAL_CONTACTS);
+    if (stateLocalStorage) {
+      this.setState({ contacts: stateLocalStorage });
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts.length === 0) {
+      localStorage.removeItem(KEY_LOCAL_CONTACTS);
+      return;
+    }
+    if (prevState.contacts !== this.state.contacts) {
+      saveLocalStorage(KEY_LOCAL_CONTACTS, this.state.contacts);
+    }
+  }
 
   handleChange = ({ target: { name, value } }) => {
     this.setState({ [name]: value });
   };
 
   deleteContact = ({ target: { id } }) => {
+    // deleteLocalStorage(KEY_LOCAL_CONTACTS, id);
     this.setState(prevState => {
       return { contacts: prevState.contacts.filter(obj => obj.id !== id) };
     });
   };
 
-  addContact = evt => {
-    const { name, number } = evt.currentTarget.elements;
-    this.checkName(name.value) &&
+  addContact = objContact => {
+    if (this.checkName(objContact.name)) {
       this.setState(prevState => ({
-        contacts: [
-          ...prevState.contacts,
-          {
-            id: nanoid(),
-            name: name.value,
-            number: number.value,
-          },
-        ],
+        contacts: [...prevState.contacts, objContact],
       }));
+      // recordLocalStorage(KEY_LOCAL_CONTACTS, objContact);
+    }
   };
 
   checkName = name => {

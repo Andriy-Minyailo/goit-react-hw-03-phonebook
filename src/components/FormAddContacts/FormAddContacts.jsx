@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import css from './FormAddContacts.module.css';
+import { nanoid } from 'nanoid';
 
 export class FormAddContacts extends Component {
   state = {
@@ -12,7 +13,7 @@ export class FormAddContacts extends Component {
   };
   submitAddContact = evt => {
     evt.preventDefault();
-    this.props.addContact(evt);
+    this.props.addContact({ ...this.state, id: nanoid() });
     this.setState({ name: '', number: '' });
   };
   render() {
